@@ -9,7 +9,7 @@ EXE=edgar
 
 # add any additional libraries here ...
 # $(addprefix -l, m pthread GL)
-LIBS=$(addprefix -l,)
+LIBS=$(addprefix -l, curl)
 
 .PHONY: clean
 
