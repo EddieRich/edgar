@@ -22,14 +22,6 @@
 	done
 */
 
-#pragma pack(1)
-struct dynptr_s
-{
-	char* ptr;
-	size_t size;
-};
-#pragma pack()
-
-int get_facts(char* ticker);
+void get_facts(char* ticker);
 
 #endif // __EDGAR_DEFINED__
