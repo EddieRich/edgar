@@ -14,13 +14,12 @@ size_t write_callback(void* contents, size_t size, size_t nmemb, void* userp)
 {
 	size_t realsize = size * nmemb;
 
-	FILE* fp = fopen(filename, "ab");
+	FILE* fp = (FILE *)userp;
 	if (fp == NULL)
 		return 0L;
 
 	fwrite(contents, size, nmemb, fp);
 	fflush(fp);
-	fclose(fp);
 
 	return realsize;
 }
@@ -30,9 +29,12 @@ void fetch(char* url)
 	CURL* pcurl = curl_easy_init();
 	if (pcurl)
 	{
+		FILE* fp = fopen(filename, "wb");
+
 		curl_easy_setopt(pcurl, CURLOPT_URL, url);
 		curl_easy_setopt(pcurl, CURLOPT_FOLLOWLOCATION, 1L);
 		curl_easy_setopt(pcurl, CURLOPT_WRITEFUNCTION, write_callback);
+		curl_easy_setopt(pcurl, CURLOPT_WRITEDATA, fp);
 		curl_easy_setopt(pcurl, CURLOPT_USERAGENT, "ehandrich@gmail.com");
 
 		CURLcode res = curl_easy_perform(pcurl);
@@ -42,6 +44,9 @@ void fetch(char* url)
 			curl_easy_cleanup(pcurl);
 			exit(EXIT_FAILURE);
 		}
+
+		fflush(fp);
+		fclose(fp);
 	}
 	else
 	{
@@ -64,7 +69,7 @@ long file_age()
 long get_cid(char* ticker)
 {
 	sprintf(filename, "/home/ed/Edgar/ticker.txt");
-	if (file_age() > 1L)
+	if (file_age() > 7L)
 		fetch("https://www.sec.gov/include/ticker.txt");
 
 	return 0L;
